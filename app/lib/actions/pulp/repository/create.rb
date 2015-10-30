@@ -60,7 +60,7 @@ module Actions
         def distributors
           case input[:content_type]
           when ::Katello::Repository::YUM_TYPE
-            [yum_distributor, yum_clone_distributor, nodes_distributor]
+            [yum_distributor, yum_clone_distributor, nodes_distributor, export_distributor]
           when ::Katello::Repository::FILE_TYPE
             [iso_distributor]
           when ::Katello::Repository::PUPPET_TYPE
@@ -86,6 +86,10 @@ module Actions
         def yum_clone_distributor
           Runcible::Models::YumCloneDistributor.new(id: "#{input[:pulp_id]}_clone",
                                                     destination_distributor_id: input[:pulp_id])
+        end
+
+        def export_distributor
+          Runcible::Models::ExportDistributor.new(true, true)
         end
 
         def nodes_distributor
