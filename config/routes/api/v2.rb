@@ -330,6 +330,8 @@ Katello::Engine.routes.draw do
             delete :index, :on => :collection, :action => :cancel
           end
 
+          api_resources :export, :only => [:index]
+
           api_resources :packages, :only => [:index, :show] do
             get :search, :on => :collection
           end
@@ -353,6 +355,7 @@ Katello::Engine.routes.draw do
             put :remove_docker_images, :action => :remove_content
             put :remove_content
             post :sync
+            post :export
             post :upload_content
             put :import_uploads
           end

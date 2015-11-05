@@ -6,7 +6,7 @@ module Katello
     before_filter :find_product, :only => [:index, :auto_complete_search]
     before_filter :find_product_for_create, :only => [:create]
     before_filter :find_organization_from_product, :only => [:create]
-    before_filter :find_repository, :only => [:show, :update, :destroy, :sync,
+    before_filter :find_repository, :only => [:show, :update, :destroy, :sync, :export,
                                               :remove_content, :upload_content,
                                               :import_uploads, :gpg_key_content]
     before_filter :find_content, :only => :remove_content
@@ -127,6 +127,13 @@ module Katello
     param :id, :identifier, :required => true, :desc => N_("repository ID")
     def sync
       task = async_task(::Actions::Katello::Repository::Sync, @repository)
+      respond_for_async :resource => task
+    end
+
+    api :POST, "/repositories/:id/export", N_("Export a repository")
+    param :id, :identifier, :required => true, :desc => N_("repository ID")
+    def export
+      task = async_task(::Actions::Katello::Repository::Export, @repository)
       respond_for_async :resource => task
     end
 

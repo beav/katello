@@ -11,6 +11,7 @@ module Katello
 
     require 'katello/actions/repository_create'
     require 'katello/actions/repository_destroy'
+    require 'katello/actions/repository_export'
     require 'katello/actions/repository_sync'
   end
 end
