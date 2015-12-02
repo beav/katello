@@ -8,11 +8,14 @@ module Actions
         end
 
         def run
-          File.open(input[:file], "rb") do |file|
-            offset = 0
-            while (chunk = file.read(upload_chunk_size))
-              pulp_resources.content.upload_bits(input[:upload_id], offset, chunk)
-              offset += upload_chunk_size
+          # no-op if we didnt get a file
+          if input[:file]
+            File.open(input[:file], "rb") do |file|
+              offset = 0
+              while (chunk = file.read(upload_chunk_size))
+                pulp_resources.content.upload_bits(input[:upload_id], offset, chunk)
+                offset += upload_chunk_size
+              end
             end
           end
         end

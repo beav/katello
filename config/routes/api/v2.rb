@@ -343,6 +343,8 @@ Katello::Engine.routes.draw do
 
           api_resources :export, :only => [:index]
 
+          api_resources :incremental_import, :only => [:index]
+
           api_resources :packages, :only => [:index, :show] do
             get :search, :on => :collection
           end
@@ -367,6 +369,7 @@ Katello::Engine.routes.draw do
             put :remove_content
             post :sync
             post :export
+            post :incremental_import
             post :upload_content
             put :import_uploads
           end

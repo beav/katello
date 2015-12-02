@@ -8,7 +8,8 @@ module Katello
     before_filter :find_organization_from_product, :only => [:create]
     before_filter :find_repository, :only => [:show, :update, :destroy, :sync, :export,
                                               :remove_content, :upload_content,
-                                              :import_uploads, :gpg_key_content]
+                                              :import_uploads, :gpg_key_content,
+                                              :incremental_import]
     before_filter :find_content, :only => :remove_content
     before_filter :find_organization_from_repo, :only => [:update]
     before_filter :find_gpg_key, :only => [:create, :update]
@@ -136,6 +137,15 @@ module Katello
       end
 
       task = async_task(::Actions::Katello::Repository::Sync, @repository, nil, params[:source_url])
+      respond_for_async :resource => task
+    end
+
+    api :POST, "/repositories/:id/incremental_import", N_("Import an incremental delta to a repository")
+    param :id, :identifier, :required => true, :desc => N_("repository ID")
+    param :import_location, String, :desc => N_("location of incremental import"), :required => true
+    def incremental_import
+      task = async_task(::Actions::Katello::Repository::IncrementalImport,
+                        @repository, params[:import_location])
       respond_for_async :resource => task
     end
 

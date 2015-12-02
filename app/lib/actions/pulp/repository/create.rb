@@ -91,7 +91,7 @@ module Actions
         def export_distributor
           # (false, false) means "no http export, no https export". We only
           # export to a directory.
-          Runcible::Models::ExportDistributor.new(false, false)
+          Runcible::Models::ExportDistributor.new(false, false, relative_url=input[:path])
         end
 
         def nodes_distributor
