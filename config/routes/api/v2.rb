@@ -57,6 +57,7 @@ Katello::Engine.routes.draw do
           get :auto_complete_search, :on => :collection
           member do
             post :copy
+            post :export
             post :publish
             post :refresh
             put :remove

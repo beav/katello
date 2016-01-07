@@ -20,6 +20,32 @@ module Katello
       param :component_ids, Array, :desc => N_("List of component content view version ids for composite views")
     end
 
+    api :POST, "/content_views/:id/export", N_("Export a content view to disk")
+    param :id, :identifier, :desc => N_("Content view identifier"), :required => true
+    param :export_to_iso, :bool, :desc => N_("Export to ISO format"), :required => false
+    param :iso_size, :bool, :desc => N_("maximum size of each ISO in MB"), :required => false
+    param :since, Date, :desc => N_("Optional date of last export (ex: 2010-01-01T12:00:00Z)"), :required => false
+    def export
+
+      if not params[:export_to_iso].present? and params[:iso_size].present?
+          raise HttpErrors::BadRequest, _("ISO export must be enabled when specifying ISO size")
+      end
+
+      if params[:since].present?
+        begin
+          params[:since].to_datetime
+        rescue
+          raise HttpErrors::BadRequest, _("Invalid date provided.")
+        end
+      end
+ 
+      task = async_task(::Actions::Katello::ContentView::Export, @view,
+                        export_to_iso = ::Foreman::Cast.to_bool(params[:export_to_iso]),
+                        since = params[:since].try(:to_datetime),
+                        iso_size = params[:iso_size])
+      respond_for_async :resource => task
+    end
+
     api :GET, "/organizations/:organization_id/content_views", N_("List content views")
     api :GET, "/content_views", N_("List content views")
     param :organization_id, :number, :desc => N_("organization identifier"), :required => true
